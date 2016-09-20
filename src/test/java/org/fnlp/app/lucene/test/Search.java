@@ -18,8 +18,6 @@ import org.fnlp.app.lucene.FudanNLPAnalyzer;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static edu.fudan.nlp.cn.CNFactory.ambiguity;
-
 public class Search {
 	public static void main(String[] args) throws IOException, ParseException, LoadModelException {
 		String indexPath = "C:/luceneDir/index/";
@@ -33,7 +31,7 @@ public class Search {
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 
 		QueryParser parser = new QueryParser("content", analyzer);
-		Query query = parser.parse("content:嘿*");
+		Query query = parser.parse("content:凡*");
 		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
 
 		// 遍历查询结果

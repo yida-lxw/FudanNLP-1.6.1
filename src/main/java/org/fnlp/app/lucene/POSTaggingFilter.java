@@ -1,14 +1,11 @@
 package org.fnlp.app.lucene;
 
-import java.io.IOException;
-
+import edu.fudan.nlp.cn.Tags;
 import org.apache.lucene.analysis.TokenStream;
 
-import edu.fudan.nlp.cn.Tags;
+import java.io.IOException;
 
 public final class POSTaggingFilter extends FilteringTokenFilter {
-
-
     private final POSAttribute posAtt = addAttribute(POSAttribute.class);
 
 

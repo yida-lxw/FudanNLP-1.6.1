@@ -1,10 +1,10 @@
 package edu.fudan.test.nlp;
 
 
-import java.util.ArrayList;
-
 import edu.fudan.ml.types.Dictionary;
 import edu.fudan.nlp.cn.tag.CWSTagger;
+
+import java.util.ArrayList;
 
 /**
  * 分词使用示例
@@ -14,12 +14,11 @@ import edu.fudan.nlp.cn.tag.CWSTagger;
 public class ChineseWordSegmentation {
 	/**
 	 * 主程序
-	 * @param args 
-	 * @throws IOException 
+	 * @param args
 	 * @throws  
 	 */
 	public static void main(String[] args) throws Exception {
-		CWSTagger tag = new CWSTagger("./models/seg.m");
+		CWSTagger tag = new CWSTagger("models/seg.m");
 		System.out.println("不使用词典的分词：");
 		String str = " 媒体计算研究所成立了, 高级数据挖掘(data mining)很难。 乐phone热卖！";
 		String s = tag.tag(str);
@@ -40,16 +39,16 @@ public class ChineseWordSegmentation {
 		tag.setDictionary(dict);
 		s = tag.tag(str);
 		System.out.println(s);
-		
-		
-		CWSTagger tag2 = new CWSTagger("./models/seg.m", new Dictionary("./models/dict.txt"));
+
+
+		CWSTagger tag2 = new CWSTagger("models/seg.m", new Dictionary("models/dict.txt"));
 		System.out.println("\n使用词典的分词：");
 		String str2 = "媒体计算研究所成立了, 高级数据挖掘很难。 乐phone热卖！";
 		String s2 = tag2.tag(str2);
 		System.out.println(s2);
 		
 		//使用不严格的词典
-		CWSTagger tag3 = new CWSTagger("./models/seg.m", new Dictionary("./models/dict_ambiguity.txt",true));
+		CWSTagger tag3 = new CWSTagger("models/seg.m", new Dictionary("models/dict_ambiguity.txt", true));
 		//尽量满足词典，比如词典中有“成立”“成立了”和“了”, 会使用Viterbi决定更合理的输出
 		System.out.println("\n使用不严格的词典的分词：");
 		String str3 = "媒体计算研究所成立了, 高级数据挖掘很难";
@@ -60,10 +59,10 @@ public class ChineseWordSegmentation {
 		System.out.println(s3);
 		
 		System.out.println("\n处理文件：");
-		String s4 = tag.tagFile("./example-data/data-tag.txt");
+		String s4 = tag.tagFile("example-data/data-tag.txt");
 		System.out.println(s4);
-		
-		String s5 = tag2.tagFile("./example-data/data-tag.txt");
+
+		String s5 = tag2.tagFile("example-data/data-tag.txt");
 		System.out.println(s5);
 		
 	}
