@@ -2,19 +2,14 @@ package edu.fudan.nlp.cn.tag;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-
-import edu.fudan.ml.types.Instance;
 import edu.fudan.nlp.cn.Tags;
 import edu.fudan.util.MyCollection;
 
@@ -29,11 +24,11 @@ public class NERTagger {
 
 	private static POSTagger pos;
 
-	public NERTagger(CWSTagger cws, String str) throws Exception {
+	public NERTagger(CWSTagger cws, String str) {
 		pos = new POSTagger(cws, str);
 	}
 
-	public NERTagger(String segmodel, String posmodel) throws Exception {
+	public NERTagger(String segmodel, String posmodel) {
 		pos = new POSTagger(segmodel,posmodel);
 	}
 	public NERTagger(POSTagger posmodel){
@@ -47,7 +42,6 @@ public class NERTagger {
 	}
 
 	public void tag(String src,HashMap<String, String> map) {
-
 		String[] sents = src.split("\\n+");
 		try {
 			for (int i = 0; i < sents.length; i++) {

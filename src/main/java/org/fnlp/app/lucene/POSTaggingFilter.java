@@ -16,6 +16,10 @@ public final class POSTaggingFilter extends FilteringTokenFilter {
         super(enablePositionIncrements, in);
     }
 
+    public POSTaggingFilter(TokenStream in) {
+        super(true, in);
+    }
+
     @Override
     public boolean accept() throws IOException {
         String pos = posAtt.getPartOfSpeech();

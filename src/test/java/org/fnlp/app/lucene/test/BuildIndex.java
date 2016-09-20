@@ -13,7 +13,7 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.fnlp.app.lucene.FNLPAnalyzer;
+import org.fnlp.app.lucene.FudanNLPAnalyzer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -31,7 +31,7 @@ public class BuildIndex {
 		Directory dir = FSDirectory.open(Paths.get(indexPath));
 		//需要先初始化 CNFactory
 		CNFactory.getInstance("models",Models.SEG_TAG);
-		Analyzer analyzer = new FNLPAnalyzer();
+		Analyzer analyzer = new FudanNLPAnalyzer();
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
 		IndexWriter writer = new IndexWriter(dir, iwc);

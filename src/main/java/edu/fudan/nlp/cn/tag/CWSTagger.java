@@ -21,7 +21,6 @@ import edu.fudan.nlp.pipe.seq.DictLabel;
 import edu.fudan.nlp.pipe.seq.String2Sequence;
 
 import edu.fudan.util.MyCollection;
-import edu.fudan.util.exception.LoadModelException;
 import gnu.trove.set.hash.THashSet;
 
 /**
@@ -51,9 +50,8 @@ public class CWSTagger extends AbstractTagger {
 	/**
 	 * 构造函数，使用LinearViterbi解码
 	 * @param modelPath 模型文件名
-	 * @throws LoadModelException
 	 */
-	public CWSTagger(String modelPath) throws LoadModelException {
+	public CWSTagger(String modelPath) {
 		super(modelPath);
 		prePipe = new String2Sequence(isEnFilter);
 
@@ -81,9 +79,8 @@ public class CWSTagger extends AbstractTagger {
 	 * 构造函数，使用ConstraintViterbi解码
 	 * @param str 模型文件名
 	 * @param dict 外部词典资源
-	 * @throws Exception
 	 */
-	public CWSTagger(String str, Dictionary dict) throws Exception {
+	public CWSTagger(String str, Dictionary dict) {
 		this(str);
 		initDict(dict);
 	}

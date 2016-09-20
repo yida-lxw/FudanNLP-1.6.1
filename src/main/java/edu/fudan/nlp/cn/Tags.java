@@ -32,6 +32,7 @@ public class Tags {
 
 	
 	static Pattern stopwordPattern  = Pattern.compile(".*代词|标点|介词|从属连词|语气词|叹词|结构助词|拟声词|方位词");
+
 	/**
 	 * 判断词性是否为无意义词。
 	 * @param pos 词性

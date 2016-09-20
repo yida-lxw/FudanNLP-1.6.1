@@ -15,7 +15,6 @@ import edu.fudan.ml.types.alphabet.IFeatureAlphabet;
 import edu.fudan.ml.types.alphabet.LabelAlphabet;
 import edu.fudan.nlp.parser.Sentence;
 import edu.fudan.nlp.parser.Target;
-import edu.fudan.util.exception.LoadModelException;
 import edu.fudan.util.exception.UnsupportedDataTypeException;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -42,9 +41,8 @@ public class JointParser implements Serializable{
 	 * 
 	 * @param modelfile
 	 *            模型目录
-	 * @throws LoadModelException 
 	 */
-	public JointParser(String modelfile) throws LoadModelException  {		
+	public JointParser(String modelfile) {
 		models = Linear.loadFrom(modelfile);
 		factory = models.getAlphabetFactory();
 		fa = factory.DefaultFeatureAlphabet();
@@ -124,11 +122,11 @@ public class JointParser implements Serializable{
 	 * 
 	 * 根据当前状态得到的特征，和训练好的模型，预测当前状态应采取的策略，用在测试中
 	 * 
-	 * @param featureAlphabet
+	 * @param //featureAlphabet
 	 *            特征名到特征ID的对应表，特征抽取时使用特征名，模型中使用特征ID，
-	 * @param model
+	 * @param //model
 	 *            分类模型
-	 * @param features
+	 * @param //features
 	 *            当前状态的特征
 	 * @return 动作及其概率 ［［动作1，概率1］，［动作2，概率2］，［动作3，概率3］］ 动作： 1->LEFT; 2->RIGHT;
 	 *         0->SHIFT
@@ -270,6 +268,4 @@ public class JointParser implements Serializable{
 		}
 		return typeset;
 	}
-
-
 }

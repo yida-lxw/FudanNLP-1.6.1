@@ -13,7 +13,6 @@ import edu.fudan.nlp.cn.tag.POSTagger;
 import edu.fudan.nlp.parser.dep.DependencyTree;
 import edu.fudan.nlp.parser.dep.JointParser;
 import edu.fudan.nlp.parser.dep.TreeCache;
-import edu.fudan.util.exception.LoadModelException;
 
 /**
  * 统一的自然语言处理入口
@@ -22,6 +21,7 @@ import edu.fudan.util.exception.LoadModelException;
  * @author xpqiu
  */
 public class CNFactory {
+    private static final String MODEL_FOLDER = "models";
     public static CWSTagger seg;
     public static POSTagger pos;
     public static NERTagger ner;
@@ -41,17 +41,15 @@ public class CNFactory {
      * 设置自定义词典
      *
      * @param path
-     * @throws IOException
-     * @throws LoadModelException
      */
-    public static void loadDict(String... path) throws LoadModelException {
+    public static void loadDict(String... path) {
         for (String file : path) {
             dict.addFile(file);
         }
         setDict();
     }
 
-    public static void loadDict(List<String> paths) throws LoadModelException {
+    public static void loadDict(List<String> paths) {
         for (String file : paths) {
             dict.addFile(file);
         }
@@ -62,7 +60,6 @@ public class CNFactory {
      * @param al 字典 ArrayList<String[]>
      *           每一个元素为一个单元String[].
      *           String[] 第一个元素为单词，后面为对应的词性
-     * @throws LoadModelException
      */
     public static void addDict(ArrayList<String[]> al) {
         dict.add(al);
@@ -95,8 +92,9 @@ public class CNFactory {
      * 更新词典
      */
     public static void setDict() {
-        if (dict == null || dict.size() == 0)
+        if (dict == null || dict.size() == 0) {
             return;
+        }
         if (pos != null) {
             pos.setDictionary(dict, true);
         } else if (seg != null) {
@@ -166,16 +164,29 @@ public class CNFactory {
         return factory;
     }
 
-    public static CNFactory getInstance(String modelPath) throws LoadModelException {
-        return getInstance(modelPath, Models.SEG, null);
+    public static CNFactory getInstance(String modelPath) {
+        return getInstance(modelPath, Models.SEG, "");
     }
 
-    public static CNFactory getInstance(String modelPath,Models model) throws LoadModelException {
-        return getInstance(modelPath, model, null);
+    public static CNFactory getInstance(String modelPath,Models model) {
+        return getInstance(modelPath, model, "");
     }
 
-    public static CNFactory getInstance(String modelPath,String model) throws LoadModelException {
-        return getInstance(modelPath, model,null);
+    public static CNFactory getInstance(String modelPath,String model) {
+        return getInstance(modelPath, model,"");
+    }
+
+    public static CNFactory getInstance(String modelPath, String model,List<String> userDicPaths) {
+        if (null != modelPath && !"".equals(modelPath) &&
+                modelPath.endsWith("/")) {
+            modelPath = modelPath.substring(0, modelPath.length() - 1);
+        }
+        loadModel(modelPath,model);
+        if(null != userDicPaths && userDicPaths.size() > 0) {
+            //加载用户自定义字典文件
+            loadDict(userDicPaths);
+        }
+        return factory;
     }
 
     /**
@@ -184,12 +195,54 @@ public class CNFactory {
      * @param modelPath  模型文件所在目录
      * @param model 载入模型类型
      * @return
-     * @throws LoadModelException
      */
-    public static CNFactory getInstance(String modelPath, String model,String userDicPath) throws LoadModelException {
-        if (modelPath.endsWith("/")) {
+    public static CNFactory getInstance(String modelPath, String model,String userDicPath) {
+        if (null != modelPath && !"".equals(modelPath) &&
+                modelPath.endsWith("/")) {
             modelPath = modelPath.substring(0, modelPath.length() - 1);
         }
+        loadModel(modelPath,model);
+        if(null != userDicPath && !"".equals(userDicPath)) {
+            //加载用户自定义字典文件
+            loadDict(userDicPath);
+        }
+        return factory;
+    }
+
+    public static CNFactory getInstance(String modelPath, Models model,List<String> userDicPaths) {
+        if (null != modelPath && !"".equals(modelPath) &&
+                modelPath.endsWith("/")) {
+            modelPath = modelPath.substring(0, modelPath.length() - 1);
+        }
+        loadModel(modelPath,model);
+        if(null != userDicPaths && userDicPaths.size() > 0) {
+            //加载用户自定义字典文件
+            loadDict(userDicPaths);
+        }
+        return factory;
+    }
+
+    /**
+     * 初始化
+     *
+     * @param modelPath  模型文件所在目录
+     * @param model 载入模型类型
+     * @return
+     */
+    public static CNFactory getInstance(String modelPath, Models model,String userDicPath) {
+        if (null != modelPath && !"".equals(modelPath) &&
+                modelPath.endsWith("/")) {
+            modelPath = modelPath.substring(0, modelPath.length() - 1);
+        }
+        loadModel(modelPath,model);
+        if(null != userDicPath && !"".equals(userDicPath)) {
+            //加载用户自定义字典文件
+            loadDict(userDicPath);
+        }
+        return factory;
+    }
+
+    private static void loadModel(String modelPath, String model) {
         if (null == model || "".equals(model)) {
             loadSeg(modelPath);
         } else if (Models.SEG.getValue().equals(model)) {
@@ -200,33 +253,20 @@ public class CNFactory {
             loadSeg(modelPath);
             loadTag(modelPath);
         } else if (Models.NER.getValue().equals(model)) {
-            loadNER(modelPath);
+            loadNER();
         } else if (Models.PARSER.getValue().equals(model)) {
             loadParser(modelPath);
         } else if (Models.ALL.getValue().equals(model)) {
             loadSeg(modelPath);
             loadTag(modelPath);
-            loadNER(modelPath);
+            loadNER();
             loadParser(modelPath);
         } else {
             loadSeg(modelPath);
         }
-        loadDict(userDicPath);
-        return factory;
     }
 
-    /**
-     * 初始化
-     *
-     * @param modelPath  模型文件所在目录
-     * @param model 载入模型类型
-     * @return
-     * @throws LoadModelException
-     */
-    public static CNFactory getInstance(String modelPath, Models model,String userDicPath) throws LoadModelException {
-        if (modelPath.endsWith("/")) {
-            modelPath = modelPath.substring(0, modelPath.length() - 1);
-        }
+    private static void loadModel(String modelPath, Models model) {
         if (null == model) {
             loadSeg(modelPath);
         } else if (Models.SEG.equals(model)) {
@@ -237,29 +277,25 @@ public class CNFactory {
             loadSeg(modelPath);
             loadTag(modelPath);
         } else if (Models.NER.equals(model)) {
-            loadNER(modelPath);
+            loadNER();
         } else if (Models.PARSER.equals(model)) {
             loadParser(modelPath);
         } else if (Models.ALL.equals(model)) {
             loadSeg(modelPath);
             loadTag(modelPath);
-            loadNER(modelPath);
+            loadNER();
             loadParser(modelPath);
         } else {
             loadSeg(modelPath);
         }
-        //加载用户自定义字典文件
-        loadDict(userDicPath);
-        return factory;
     }
 
     /**
      * 读入句法模型
      *
      * @param path 模型所在目录
-     * @throws LoadModelException
      */
-    public static void loadParser(String path) throws LoadModelException {
+    public static void loadParser(String path) {
         if (parser == null) {
             String file = path + parseModel;
             parser = new JointParser(file);
@@ -268,11 +304,8 @@ public class CNFactory {
 
     /**
      * 读入实体名识别模型
-     *
-     * @param path 模型所在目录，结尾不带"/"。
-     * @throws LoadModelException
      */
-    public static void loadNER(String path) throws LoadModelException {
+    public static void loadNER() {
         if (ner == null && pos != null) {
             ner = new NERTagger(pos);
         }
@@ -281,10 +314,9 @@ public class CNFactory {
     /**
      * 读入词性标注模型
      *
-     * @param path 模型所在目录，结尾不带"/"。
-     * @throws LoadModelException
+     * @param path 模型所在目录
      */
-    public static void loadTag(String path) throws LoadModelException {
+    public static void loadTag(String path) {
         if (pos == null) {
             String file = path + posModel;
             if (seg == null) {
@@ -298,11 +330,13 @@ public class CNFactory {
     /**
      * 读入分词模型
      *
-     * @param path 模型所在目录，结尾不带"/"。
-     * @throws LoadModelException
+     * @param path 模型所在目录
      */
-    public static void loadSeg(String path) throws LoadModelException {
-        if (seg == null) {
+    public static void loadSeg(String path) {
+        if (null == seg) {
+            if(null == path || "".equals(path)) {
+                path = MODEL_FOLDER;
+            }
             String file = path + segModel;
             seg = new CWSTagger(file);
             seg.setEnFilter(isEnFilter);
@@ -441,6 +475,4 @@ public class CNFactory {
         treeCache = new TreeCache();
         treeCache.read(file);
     }
-
-
 }

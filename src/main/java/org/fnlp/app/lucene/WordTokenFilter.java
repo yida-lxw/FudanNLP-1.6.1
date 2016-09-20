@@ -98,7 +98,6 @@ public final class WordTokenFilter extends TokenFilter {
 			}
 		}
 
-
 		termAtt.append(nextWord);
 		if(null != posIter) {
 			String pos = posIter.next();

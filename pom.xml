@@ -28,6 +28,13 @@
     </properties>
 
     <dependencies>
+        <!-- Solr5 -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
         <!-- Lucene5 -->
         <dependency>
             <groupId>org.apache.lucene</groupId>

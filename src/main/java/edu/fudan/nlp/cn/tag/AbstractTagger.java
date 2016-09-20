@@ -38,12 +38,11 @@ public abstract class AbstractTagger {
 	/**
 	 * 抽象标注器构造函数
 	 * @param file 模型文件
-	 * @throws LoadModelException
 	 */
-	public AbstractTagger(String file) throws LoadModelException	{
+	public AbstractTagger(String file) {
 		loadFrom(file);
 		if(getClassifier()==null){
-			throw new LoadModelException("模型为空");
+			throw new RuntimeException("模型为空");
 		}
 
 		factory = getClassifier().getAlphabetFactory();
@@ -150,7 +149,7 @@ public abstract class AbstractTagger {
 		out.close();
 	}
 
-	public void loadFrom(String modelfile) throws LoadModelException{
+	public void loadFrom(String modelfile) {
 		ObjectInputStream in = null;
 		InputStream is = null;
 		try {
@@ -172,14 +171,18 @@ public abstract class AbstractTagger {
 				templets = (TempletGroup) in.readObject();
 				setClassifier((Linear) in.readObject());
 			} catch (IOException ee) {
-				throw new LoadModelException(ee,modelfile);
+				throw new RuntimeException("Load mode file[" + modelfile +
+						"] occur IO exception.");
 			}  catch (ClassNotFoundException ee) {
-				throw new LoadModelException(ee,modelfile);
+				throw new RuntimeException("Load mode file[" + modelfile +
+						"] occur ClassNotFoundException.");
 			}
 		} catch (IOException e) {
-			throw new LoadModelException(e,modelfile);
+			throw new RuntimeException("Load mode file[" + modelfile +
+					"] occur IO exception.");
 		}  catch (ClassNotFoundException e) {
-			throw new LoadModelException(e,modelfile);
+			throw new RuntimeException("Load mode file[" + modelfile +
+					"] occur ClassNotFoundException.");
 		} finally {
 			try {
 				in.close();

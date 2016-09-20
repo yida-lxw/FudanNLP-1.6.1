@@ -3,9 +3,7 @@ package edu.fudan.nlp.cn.tag;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Set;
-
 import org.apache.commons.cli.*;
-
 import edu.fudan.ml.classifier.struct.inf.ConstraintViterbi;
 import edu.fudan.ml.classifier.struct.inf.LinearViterbi;
 import edu.fudan.ml.types.Dictionary;
@@ -14,7 +12,6 @@ import edu.fudan.nlp.cn.Chars;
 import edu.fudan.nlp.pipe.Pipe;
 import edu.fudan.nlp.pipe.SeriesPipes;
 import edu.fudan.nlp.pipe.seq.DictPOSLabel;
-import edu.fudan.util.exception.LoadModelException;
 
 /**
  * 词性标注器
@@ -36,15 +33,14 @@ public class POSTagger extends AbstractTagger {
 	 * 构造函数
 	 * @param cwsmodel 分词模型文件
 	 * @param str 词性模型文件
-	 * @throws Exception
 	 */
-	public POSTagger(String cwsmodel, String str) throws Exception {
+	public POSTagger(String cwsmodel, String str) {
 		super(str);
 		cws = new CWSTagger(cwsmodel);
 	}
 
 	//分词词典也被dict指定
-	public POSTagger(String cwsmodel, String str, Dictionary dict) throws Exception {
+	public POSTagger(String cwsmodel, String str, Dictionary dict) {
 		super(str);
 		cws = new CWSTagger(cwsmodel);
 		setDictionary(dict, true);	
@@ -54,9 +50,8 @@ public class POSTagger extends AbstractTagger {
 	/**
 	 * 构造函数
 	 * @param str 词性模型文件
-	 * @throws Exception
 	 */
-	public POSTagger(String str) throws LoadModelException {
+	public POSTagger(String str) {
 		super(str);
 		System.out.println("只能处理分好词的句子");
 	}
@@ -65,9 +60,8 @@ public class POSTagger extends AbstractTagger {
 	 * 不建立分词模型，只能处理分好词的句子
 	 * @param str
 	 * @param dict
-	 * @throws LoadModelException
 	 */
-	public POSTagger(String str, Dictionary dict) throws LoadModelException   {
+	public POSTagger(String str, Dictionary dict) {
 		super(str);
 		setDictionary(dict, false);
 	}
@@ -76,12 +70,11 @@ public class POSTagger extends AbstractTagger {
 	 * 构造函数
 	 * @param cws 分词模型
 	 * @param str 词性模型文件
-	 * @throws LoadModelException
 	 */
-	public POSTagger(CWSTagger cws, String str) throws LoadModelException {
+	public POSTagger(CWSTagger cws, String str) {
 		super(str);
 		if(cws==null)
-			throw new LoadModelException("分词模型不能为空");
+			throw new RuntimeException("分词模型不能为空");
 		this.cws = cws;	
 	}
 	/**
@@ -89,13 +82,13 @@ public class POSTagger extends AbstractTagger {
 	 * @param cws 分词模型
 	 * @param str 词性模型文件
 	 * @param dict 词性词典
-	 * @param isSetSegDict bool 指定该dict是否用于cws分词（分词和词性可以使用不同的词典）。true为替换之前的分词词典, false为使用原来分词设置的词典。
-	 * @throws Exception
+	 * @param isSetSegDict bool 指定该dict是否用于cws分词（分词和词性可以使用不同的词典）。
+	 *                     true为替换之前的分词词典, false为使用原来分词设置的词典
 	 */
-	public POSTagger(CWSTagger cws, String str, Dictionary dict, boolean isSetSegDict) throws Exception {
+	public POSTagger(CWSTagger cws, String str, Dictionary dict, boolean isSetSegDict) {
 		super(str);
-		if(cws==null)
-			throw new Exception("分词模型不能为空");
+		if(cws == null)
+			throw new RuntimeException("分词模型不能为空");
 		this.cws = cws;
 		setDictionary(dict, isSetSegDict);	
 	}
@@ -103,7 +96,6 @@ public class POSTagger extends AbstractTagger {
 	/**
 	 * 设置词典, 参数指定是否同时设置分词词典
 	 * @param dict 词典
-	 * @throws LoadModelException 
 	 */
 	public void setDictionary(Dictionary dict, boolean isSetSegDict)   {
 		removeDictionary(isSetSegDict);
@@ -229,14 +221,14 @@ public class POSTagger extends AbstractTagger {
 	public String[] tagSeged(String[] src) {
 		if(src==null || src.length==0)
 			return null;
-		String[] target=null;
+		String[] target = null;
 		try {
 			Instance inst = new Instance(src);
 			doProcess(inst);
 			int[] pred = (int[]) getClassifier().classify(inst).getLabel(0);
 			target = labels.lookupString(pred);			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("POSTagger:tagSeged occur exception.",e);
 		}		
 		return target;
 	}

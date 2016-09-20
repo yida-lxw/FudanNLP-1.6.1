@@ -86,7 +86,7 @@ public class Linear extends AbstractClassifier implements Serializable	{
 	 * @return
 	 * @throws LoadModelException
 	 */
-	public static Linear loadFrom(String file) throws LoadModelException{
+	public static Linear loadFrom(String file) {
 		Linear cl = null;
 		try {
 			ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(
@@ -94,7 +94,7 @@ public class Linear extends AbstractClassifier implements Serializable	{
 			cl = (Linear) in.readObject();
 			in.close();
 		} catch (Exception e) {
-			throw new LoadModelException(e,file);
+			throw new RuntimeException("load model file[" + file + "] occur Exception.",e);
 		}
 		return cl;
 	}

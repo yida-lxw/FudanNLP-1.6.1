@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">  
+<properties>  
+	<comment>FudanNLP Analyzer 配置</comment>
+	<!--用户可以在这里配置自己的自定义扩展字典，可以是字典文件路径，
+	也可以是字典文件所在目录路径，多个路径之间使用分号;分割 -->
+	<entry key="user_dic">ext.dic;</entry>
+	
+	<!--用户可以在这里配置自己的停用词字典，可以是字典文件路径，
+	也可以是字典文件所在目录路径，多个路径之间使用分号;分割-->
+	<entry key="stop_word_dic">stopword.dic;</entry>
+
+	<!--用户可以在这里配置模型文件所在目录路径-->
+	<entry key="mode_path">models</entry>
+
+	<!--用户可以在这里配置模型文件的类型，可选值有：seg,tag,seg_tag,ner,parser,all-->
+	<entry key="mode">seg</entry>
+
+	<!--用户可以在这里配置是否启用POSFilter过滤器:true/false-->
+	<entry key="use_pos_filter">true</entry>
+</properties>
