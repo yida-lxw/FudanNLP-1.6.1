@@ -4,10 +4,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Set;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.*;
 
 import edu.fudan.ml.classifier.struct.inf.ConstraintViterbi;
 import edu.fudan.ml.classifier.struct.inf.LinearViterbi;

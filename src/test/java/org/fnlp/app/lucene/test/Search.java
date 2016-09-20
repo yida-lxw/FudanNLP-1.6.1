@@ -24,14 +24,14 @@ public class Search {
 		System.out.println("Index directory '" + indexPath);
 		Directory dir = FSDirectory.open(Paths.get(indexPath));
 		//需要先初始化 CNFactory
-		CNFactory factory = CNFactory.getInstance("./models",Models.SEG_TAG);
+		CNFactory factory = CNFactory.getInstance("models",Models.SEG_TAG);
 		Analyzer analyzer = new FNLPAnalyzer();
 
 		DirectoryReader ireader = DirectoryReader.open(dir);
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 
 		QueryParser parser = new QueryParser("content", analyzer);
-		Query query = parser.parse("终端 费用^4");
+		Query query = parser.parse("content:嘿*");
 		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
 
 		// 遍历查询结果

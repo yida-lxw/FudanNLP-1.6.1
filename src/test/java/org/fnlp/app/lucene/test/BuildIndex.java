@@ -24,12 +24,13 @@ import java.util.Date;
  */
 public class BuildIndex {
 	public static void main(String[] args) throws IOException, LoadModelException {
+		System.setProperty("file.encoding","UTF-8");
 		String indexPath = "C:/luceneDir/index/";
 		System.out.println("Indexing to directory '" + indexPath  + "'...");
 		Date start = new Date();
 		Directory dir = FSDirectory.open(Paths.get(indexPath));
 		//需要先初始化 CNFactory
-		CNFactory factory = CNFactory.getInstance("./models",Models.SEG_TAG);
+		CNFactory.getInstance("models",Models.SEG_TAG);
 		Analyzer analyzer = new FNLPAnalyzer();
 		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
@@ -38,7 +39,8 @@ public class BuildIndex {
 		String[] strs = new String[]{
 				"终端的保修期为一年。",
 				"凡在保修期内非人为损坏，均可免费保修。",
-				"人为损坏的终端将视情况收取维修费用。"
+				"人为损坏的终端将视情况收取维修费用。",
+				"嘿嘿，赶早不赶晚"
 		};
 		for(int i=0;i<strs.length;i++){
 			Document doc = new Document();
@@ -50,6 +52,7 @@ public class BuildIndex {
 				writer.updateDocument(new Term("content",strs[i]), doc);
 			}
 		}
+		writer.commit();
 		writer.close();
 
 		Date end = new Date();

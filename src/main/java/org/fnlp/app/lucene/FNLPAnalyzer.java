@@ -14,14 +14,15 @@ import edu.fudan.util.exception.LoadModelException;
 public final class FNLPAnalyzer extends Analyzer {
 	/**是否使用词性过滤器*/
 	private boolean usePOSFilter;
-
+	/**停用词字典文件的加载路径*/
+	private String stopwordPath;
 	/**
 	 * 指定CNFactory路径
-	 * @param path CNFactory路径
+	 * @param path CNFactory路径,可以是硬盘绝对路径，也可以是classpath下相对路径
 	 * @param usePOSFilter 使用词性作为停用词过滤
 	 * @throws LoadModelException 
 	 */
-	public FNLPAnalyzer(String path,boolean usePOSFilter) throws LoadModelException {
+	public FNLPAnalyzer(String path,String mode,boolean usePOSFilter) throws LoadModelException {
 		CNFactory.getInstance(path,Models.SEG_TAG);
 		this.usePOSFilter = usePOSFilter;
 	}

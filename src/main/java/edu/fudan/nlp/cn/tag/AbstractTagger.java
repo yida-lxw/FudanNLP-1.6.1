@@ -1,16 +1,6 @@
 package edu.fudan.nlp.cn.tag;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -65,7 +55,6 @@ public abstract class AbstractTagger {
 
 	public AbstractTagger() {
 	}
-	
 
 	/**
 	 * 序列标注方法
@@ -162,14 +151,41 @@ public abstract class AbstractTagger {
 	}
 
 	public void loadFrom(String modelfile) throws LoadModelException{
+		ObjectInputStream in = null;
+		InputStream is = null;
 		try {
-			ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(
-					new GZIPInputStream(new FileInputStream(modelfile))));
+			is = new FileInputStream(modelfile);
+			if(is == null) {
+				is = this.getClass().getClassLoader().getResourceAsStream(modelfile);
+			}
+			in = new ObjectInputStream(new BufferedInputStream(
+					new GZIPInputStream(is)));
+
 			templets = (TempletGroup) in.readObject();
 			setClassifier((Linear) in.readObject());
-			in.close();
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			try {
+				is = this.getClass().getClassLoader().getResourceAsStream(modelfile);
+				in = new ObjectInputStream(new BufferedInputStream(
+						new GZIPInputStream(is)));
+
+				templets = (TempletGroup) in.readObject();
+				setClassifier((Linear) in.readObject());
+			} catch (IOException ee) {
+				throw new LoadModelException(ee,modelfile);
+			}  catch (ClassNotFoundException ee) {
+				throw new LoadModelException(ee,modelfile);
+			}
+		} catch (IOException e) {
 			throw new LoadModelException(e,modelfile);
+		}  catch (ClassNotFoundException e) {
+			throw new LoadModelException(e,modelfile);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

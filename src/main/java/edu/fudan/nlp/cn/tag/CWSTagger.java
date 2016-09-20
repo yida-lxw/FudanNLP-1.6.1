@@ -41,20 +41,20 @@ public class CWSTagger extends AbstractTagger {
 
 	/**
 	 * 是否对英文单词进行预处理，将连续的英文字母看成一个单词
-	 * @param b
+	 * @param isEnFilter  是否对英文单词进行预处理
 	 */
-	public void setEnFilter(boolean b){
-		isEnFilter = b;
+	public void setEnFilter(boolean isEnFilter){
+		isEnFilter = isEnFilter;
 		prePipe = new String2Sequence(isEnFilter);
 	}
 
 	/**
 	 * 构造函数，使用LinearViterbi解码
-	 * @param str 模型文件名
+	 * @param modelPath 模型文件名
 	 * @throws LoadModelException
 	 */
-	public CWSTagger(String str) throws LoadModelException {
-		super(str);
+	public CWSTagger(String modelPath) throws LoadModelException {
+		super(modelPath);
 		prePipe = new String2Sequence(isEnFilter);
 
 		//		DynamicViterbi dv = new DynamicViterbi(
@@ -67,9 +67,7 @@ public class CWSTagger extends AbstractTagger {
 	}
 
 	private void initDict(Dictionary dict) {
-		
-	
-			dictPipe = new DictLabel(dict, labels);
+		dictPipe = new DictLabel(dict, labels);
 
 		oldfeaturePipe = featurePipe;
 		featurePipe = new SeriesPipes(new Pipe[] { dictPipe, featurePipe });
@@ -239,6 +237,4 @@ public class CWSTagger extends AbstractTagger {
 			System.out.println(s);
 		}
 	}
-
-
 }
