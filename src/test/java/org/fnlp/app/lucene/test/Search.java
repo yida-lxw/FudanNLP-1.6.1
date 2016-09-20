@@ -33,7 +33,6 @@ public class Search {
 		QueryParser parser = new QueryParser("content", analyzer);
 		Query query = parser.parse("content:凡*");
 		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
-
 		// 遍历查询结果
 		for (int i = 0; i < hits.length; i++) {
 			Document hitDoc = isearcher.doc(hits[i].doc);
