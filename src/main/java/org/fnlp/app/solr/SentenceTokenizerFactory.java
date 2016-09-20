@@ -23,6 +23,9 @@ public class SentenceTokenizerFactory extends TokenizerFactory {
     /**用户自定义扩展字典文件或目录的加载路径*/
     private String userDicPath;
 
+    /**是否启用对用户自定义扩展字典里的词语进行模糊处理*/
+    private boolean ambiguity;
+
     /**用户自定义扩展字典文件或目录的加载路径[批量指定多个]*/
     private List<String> userDicPaths;
 
@@ -61,15 +64,23 @@ public class SentenceTokenizerFactory extends TokenizerFactory {
                 this.userDicPaths = config.userDicPath();
             }
         }
+
+        Object obj = get(args,"ambiguity");
+        //若用户未指定此参数，则从核心配置文件：FudanNLP.xml中获取
+        if(null == obj || "".equals(obj.toString())) {
+            if(null != config) {
+                this.ambiguity = config.ambiguity();
+            }
+        }
     }
 
     @Override
     public Tokenizer create(AttributeFactory factory) {
         //初始化模型文件并加载用户自定义扩展字典文件
         if(null != this.userDicPaths && this.userDicPaths.size() > 0) {
-            CNFactory.getInstance(this.modePath,this.mode,userDicPaths);
+            CNFactory.getInstance(this.modePath,this.mode,userDicPaths,this.ambiguity);
         } else {
-            CNFactory.getInstance(this.modePath,this.mode,userDicPath);
+            CNFactory.getInstance(this.modePath,this.mode,userDicPath,this.ambiguity);
         }
         return new SentenceTokenizer(factory);
     }

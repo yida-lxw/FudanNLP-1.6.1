@@ -18,4 +18,7 @@
 
 	<!--用户可以在这里配置是否启用POSFilter过滤器:true/false-->
 	<entry key="use_pos_filter">true</entry>
+
+	<!--用户可以在这里配置是否启用对用户自定义扩展字典里的词语进行模糊处理:true/false-->
+	<entry key="dic_ambiguity">true</entry>
 </properties>

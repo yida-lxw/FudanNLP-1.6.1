@@ -22,6 +22,10 @@ import edu.fudan.nlp.parser.dep.TreeCache;
  */
 public class CNFactory {
     private static final String MODEL_FOLDER = "models";
+    private static final boolean DEFAULT_AMBIGUITY = true;
+
+    /**是否对用户自定义词典启用模糊处理，具体请查阅ChineseWordSegmentation类*/
+    public static boolean ambiguity;
     public static CWSTagger seg;
     public static POSTagger pos;
     public static NERTagger ner;
@@ -31,7 +35,7 @@ public class CNFactory {
     public static String segModel = "/seg.m";
     public static String posModel = "/pos.m";
     public static String parseModel = "/dep.m";
-    public static Dictionary dict = new Dictionary(true);
+    public static Dictionary dict;
 
     public static CNFactory factory = new CNFactory();
     public static ChineseTrans ct = new ChineseTrans();
@@ -161,22 +165,47 @@ public class CNFactory {
      * @return
      */
     public static CNFactory getInstance() {
+        CNFactory.ambiguity = DEFAULT_AMBIGUITY;
+        dict = new Dictionary(CNFactory.ambiguity);
         return factory;
+    }
+    /**
+     * 初始化
+     *
+     * @return
+     */
+    public static CNFactory getInstance(boolean ambiguity) {
+        CNFactory.ambiguity = ambiguity;
+        dict = new Dictionary(ambiguity);
+        return factory;
+    }
+
+    public static CNFactory getInstance(String modelPath,boolean ambiguity) {
+        return getInstance(modelPath, Models.SEG, "",ambiguity);
     }
 
     public static CNFactory getInstance(String modelPath) {
-        return getInstance(modelPath, Models.SEG, "");
+        return getInstance(modelPath, Models.SEG, "",DEFAULT_AMBIGUITY);
     }
 
     public static CNFactory getInstance(String modelPath,Models model) {
-        return getInstance(modelPath, model, "");
+        return getInstance(modelPath, model, "",DEFAULT_AMBIGUITY);
+    }
+
+    public static CNFactory getInstance(String modelPath,Models model,boolean ambiguity) {
+        return getInstance(modelPath, model, "",ambiguity);
+    }
+
+    public static CNFactory getInstance(String modelPath,String model,boolean ambiguity) {
+        return getInstance(modelPath, model,"",ambiguity);
     }
 
     public static CNFactory getInstance(String modelPath,String model) {
-        return getInstance(modelPath, model,"");
+        return getInstance(modelPath, model,"",DEFAULT_AMBIGUITY);
     }
 
-    public static CNFactory getInstance(String modelPath, String model,List<String> userDicPaths) {
+    public static CNFactory getInstance(String modelPath, String model,
+              List<String> userDicPaths,boolean ambiguity) {
         if (null != modelPath && !"".equals(modelPath) &&
                 modelPath.endsWith("/")) {
             modelPath = modelPath.substring(0, modelPath.length() - 1);
@@ -186,9 +215,25 @@ public class CNFactory {
             //加载用户自定义字典文件
             loadDict(userDicPaths);
         }
+        CNFactory.ambiguity = ambiguity;
+        dict = new Dictionary(ambiguity);
         return factory;
     }
 
+    public static CNFactory getInstance(String modelPath, String model,
+                                        List<String> userDicPaths) {
+        return getInstance(modelPath,model,userDicPaths,DEFAULT_AMBIGUITY);
+    }
+
+    public static CNFactory getInstance(String modelPath, Models model,
+                                        List<String> userDicPaths) {
+        return getInstance(modelPath,model,userDicPaths,DEFAULT_AMBIGUITY);
+    }
+
+    public static CNFactory getInstance(String modelPath, String model,
+                                        String userDicPath) {
+        return getInstance(modelPath,model,userDicPath,DEFAULT_AMBIGUITY);
+    }
     /**
      * 初始化
      *
@@ -196,7 +241,8 @@ public class CNFactory {
      * @param model 载入模型类型
      * @return
      */
-    public static CNFactory getInstance(String modelPath, String model,String userDicPath) {
+    public static CNFactory getInstance(String modelPath, String model,
+           String userDicPath,boolean ambiguity) {
         if (null != modelPath && !"".equals(modelPath) &&
                 modelPath.endsWith("/")) {
             modelPath = modelPath.substring(0, modelPath.length() - 1);
@@ -206,10 +252,14 @@ public class CNFactory {
             //加载用户自定义字典文件
             loadDict(userDicPath);
         }
+        CNFactory.ambiguity = ambiguity;
+        dict = new Dictionary(ambiguity);
         return factory;
     }
 
-    public static CNFactory getInstance(String modelPath, Models model,List<String> userDicPaths) {
+
+    public static CNFactory getInstance(String modelPath, Models model,
+            List<String> userDicPaths,boolean ambiguity) {
         if (null != modelPath && !"".equals(modelPath) &&
                 modelPath.endsWith("/")) {
             modelPath = modelPath.substring(0, modelPath.length() - 1);
@@ -219,7 +269,14 @@ public class CNFactory {
             //加载用户自定义字典文件
             loadDict(userDicPaths);
         }
+        CNFactory.ambiguity = ambiguity;
+        dict = new Dictionary(ambiguity);
         return factory;
+    }
+
+    public static CNFactory getInstance(String modelPath, Models model,
+           String userDicPath) {
+        return getInstance(modelPath,model,userDicPath,DEFAULT_AMBIGUITY);
     }
 
     /**
@@ -229,7 +286,8 @@ public class CNFactory {
      * @param model 载入模型类型
      * @return
      */
-    public static CNFactory getInstance(String modelPath, Models model,String userDicPath) {
+    public static CNFactory getInstance(String modelPath, Models model,
+            String userDicPath,boolean ambiguity) {
         if (null != modelPath && !"".equals(modelPath) &&
                 modelPath.endsWith("/")) {
             modelPath = modelPath.substring(0, modelPath.length() - 1);
@@ -239,6 +297,8 @@ public class CNFactory {
             //加载用户自定义字典文件
             loadDict(userDicPath);
         }
+        CNFactory.ambiguity = ambiguity;
+        dict = new Dictionary(ambiguity);
         return factory;
     }
 
@@ -468,7 +528,10 @@ public class CNFactory {
 
     public static void setEnFilter(boolean b) {
         isEnFilter = b;
+    }
 
+    public static void setAmbiguity(boolean ambiguity) {
+        CNFactory.ambiguity = ambiguity;
     }
 
     public static void readDepCache(String file) throws IOException {

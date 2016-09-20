@@ -24,6 +24,8 @@ public class DefaultConfiguration implements Configuration {
     private static final String MODE_PATH = "mode_path";
     /**是否启用POSFilter*/
     private static final String USE_POS_FILTER = "use_pos_filter";
+    /**是否启用对用户自定义扩展字典里的词语进行模糊处理*/
+    private static final String DIC_AMBIQUITY = "dic_ambiguity";
 
     private Properties props;
 
@@ -65,6 +67,18 @@ public class DefaultConfiguration implements Configuration {
      */
     public boolean usePOSFilter() {
         Object obj = props.get(USE_POS_FILTER);
+        if(null == obj) {
+            return false;
+        }
+        return Boolean.valueOf(obj.toString());
+    }
+
+    /**
+     * 是否启用对用户自定义扩展字典里的词语进行模糊处理
+     * @return
+     */
+    public boolean ambiguity() {
+        Object obj = props.get(DIC_AMBIQUITY);
         if(null == obj) {
             return false;
         }

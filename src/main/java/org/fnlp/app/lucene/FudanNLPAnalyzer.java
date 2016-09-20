@@ -24,6 +24,8 @@ public final class FudanNLPAnalyzer extends Analyzer {
 
 	/**是否启用位置增量*/
 	private boolean enablePositionIncrements;
+	/**是否启用对用户自定义扩展字典里的词语进行模糊处理*/
+	private boolean ambiguity;
 
 	static {
 		config = DefaultConfiguration.getInstance();
@@ -36,15 +38,29 @@ public final class FudanNLPAnalyzer extends Analyzer {
 	 * @param userDicPath   用户自定义扩展字典文件或目录路径
 	 * @param stopwordPath  用户扩展停用词字典文件路径
 	 * @param usePOSFilter  是否启用词性过滤器
+	 * @param ambiguity     是否启用对用户自定义扩展字典里的词语进行模糊处理
      */
 	public FudanNLPAnalyzer(String modePath, String mode, String userDicPath,
-							String stopwordPath, boolean usePOSFilter) {
+							String stopwordPath, boolean usePOSFilter,boolean ambiguity) {
 		this.stopwordPath = stopwordPath;
 		this.usePOSFilter = usePOSFilter;
 		this.enablePositionIncrements = true;
 		//初始化模型文件并加载用户自定义扩展字典文件
-		CNFactory.getInstance(modePath,mode,userDicPath);
+		CNFactory.getInstance(modePath,mode,userDicPath,ambiguity);
 	}
+
+	public FudanNLPAnalyzer(String modePath, String mode, String userDicPath,
+							String stopwordPath, boolean usePOSFilter) {
+		if(null != config) {
+			this.ambiguity = config.ambiguity();
+		}
+		this.stopwordPath = stopwordPath;
+		this.usePOSFilter = usePOSFilter;
+		this.enablePositionIncrements = true;
+		//初始化模型文件并加载用户自定义扩展字典文件
+		CNFactory.getInstance(modePath,mode,userDicPath,this.ambiguity);
+	}
+
 
 	/**
 	 * FNLPAnalyzer构造函数
@@ -58,12 +74,31 @@ public final class FudanNLPAnalyzer extends Analyzer {
 		this.stopwordPath = stopwordPath;
 		if(null != config) {
 			this.usePOSFilter = config.usePOSFilter();
+			this.ambiguity = config.ambiguity();
 		} else {
 			this.usePOSFilter = true;
 		}
 		this.enablePositionIncrements = true;
 		//初始化模型文件并加载用户自定义扩展字典文件
-		CNFactory.getInstance(modePath,mode,userDicPath);
+		CNFactory.getInstance(modePath,mode,userDicPath,this.ambiguity);
+	}
+
+	/**
+	 * FNLPAnalyzer构造函数
+	 * @param modePath      模型文件目录,可以是硬盘绝对路径，也可以是classpath下相对路径
+	 * @param mode          模型类型，可选值有：seg,tag,seg_tag,ner,parser,all
+	 * @param userDicPath   用户自定义扩展字典文件或目录路径
+	 * @param ambiguity     是否启用对用户自定义扩展字典里的词语进行模糊处理
+	 */
+	public FudanNLPAnalyzer(String modePath, String mode, String userDicPath,boolean ambiguity) {
+		if(null != config) {
+			this.usePOSFilter = config.usePOSFilter();
+		} else {
+			this.usePOSFilter = true;
+		}
+		this.enablePositionIncrements = true;
+		//初始化模型文件并加载用户自定义扩展字典文件
+		CNFactory.getInstance(modePath,mode,userDicPath,ambiguity);
 	}
 
 	/**
@@ -75,12 +110,32 @@ public final class FudanNLPAnalyzer extends Analyzer {
 	public FudanNLPAnalyzer(String modePath, String mode, String userDicPath) {
 		if(null != config) {
 			this.usePOSFilter = config.usePOSFilter();
+			this.ambiguity = config.ambiguity();
 		} else {
 			this.usePOSFilter = true;
 		}
 		this.enablePositionIncrements = true;
 		//初始化模型文件并加载用户自定义扩展字典文件
-		CNFactory.getInstance(modePath,mode,userDicPath);
+		CNFactory.getInstance(modePath,mode,userDicPath,this.ambiguity);
+	}
+
+	/**
+	 * FNLPAnalyzer构造函数
+	 * @param modePath      模型文件目录,可以是硬盘绝对路径，也可以是classpath下相对路径
+	 * @param mode          模型类型，可选值有：seg,tag,seg_tag,ner,parser,all
+	 * @param ambiguity     是否启用对用户自定义扩展字典里的词语进行模糊处理
+	 */
+	public FudanNLPAnalyzer(String modePath, String mode,boolean ambiguity) {
+		if(null != config) {
+			this.usePOSFilter = config.usePOSFilter();
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(modePath,mode,config.userDicPath(),ambiguity);
+		} else {
+			this.usePOSFilter = true;
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(modePath,mode,ambiguity);
+		}
+		this.enablePositionIncrements = true;
 	}
 
 	/**
@@ -91,12 +146,32 @@ public final class FudanNLPAnalyzer extends Analyzer {
 	public FudanNLPAnalyzer(String modePath, String mode) {
 		if(null != config) {
 			this.usePOSFilter = config.usePOSFilter();
+			this.ambiguity = config.ambiguity();
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(modePath,mode,config.userDicPath());
+			CNFactory.getInstance(modePath,mode,config.userDicPath(),this.ambiguity);
 		} else {
 			this.usePOSFilter = true;
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(modePath,mode);
+			CNFactory.getInstance(modePath,this.ambiguity);
+		}
+		this.enablePositionIncrements = true;
+	}
+
+	/**
+	 * FNLPAnalyzer构造函数
+	 * @param modePath  模型文件目录,可以是硬盘绝对路径，
+	 *                  也可以是classpath下相对路径
+	 * @param ambiguity     是否启用对用户自定义扩展字典里的词语进行模糊处理
+	 */
+	public FudanNLPAnalyzer(String modePath,boolean ambiguity) {
+		if(null != config) {
+			this.usePOSFilter = config.usePOSFilter();
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(modePath,config.model(),config.userDicPath(),ambiguity);
+		} else {
+			this.usePOSFilter = true;
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(modePath,"",ambiguity);
 		}
 		this.enablePositionIncrements = true;
 	}
@@ -109,12 +184,30 @@ public final class FudanNLPAnalyzer extends Analyzer {
 	public FudanNLPAnalyzer(String modePath) {
 		if(null != config) {
 			this.usePOSFilter = config.usePOSFilter();
+			this.ambiguity = config.ambiguity();
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(modePath,config.model(),config.userDicPath());
+			CNFactory.getInstance(modePath,config.model(),config.userDicPath(),this.ambiguity);
 		} else {
 			this.usePOSFilter = true;
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(modePath,"");
+			CNFactory.getInstance(modePath,"",this.ambiguity);
+		}
+		this.enablePositionIncrements = true;
+	}
+
+	/**
+	 * FNLPAnalyzer构造函数
+	 * @param ambiguity     是否启用对用户自定义扩展字典里的词语进行模糊处理
+	 */
+	public FudanNLPAnalyzer(boolean ambiguity) {
+		if(null != config) {
+			this.usePOSFilter = config.usePOSFilter();
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(config.modePath(),config.model(),config.userDicPath(),ambiguity);
+		} else {
+			this.usePOSFilter = true;
+			//初始化模型文件并加载用户自定义扩展字典文件
+			CNFactory.getInstance(null,"",ambiguity);
 		}
 		this.enablePositionIncrements = true;
 	}
@@ -122,12 +215,13 @@ public final class FudanNLPAnalyzer extends Analyzer {
 	public FudanNLPAnalyzer() {
 		if(null != config) {
 			this.usePOSFilter = config.usePOSFilter();
+			this.ambiguity = config.ambiguity();
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(config.modePath(),config.model(),config.userDicPath());
+			CNFactory.getInstance(config.modePath(),config.model(),config.userDicPath(),this.ambiguity);
 		} else {
 			this.usePOSFilter = true;
 			//初始化模型文件并加载用户自定义扩展字典文件
-			CNFactory.getInstance(null,"");
+			CNFactory.getInstance(null,"",this.ambiguity);
 		}
 		this.enablePositionIncrements = true;
 	}

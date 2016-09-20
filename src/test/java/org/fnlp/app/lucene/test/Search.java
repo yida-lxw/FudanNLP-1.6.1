@@ -18,13 +18,15 @@ import org.fnlp.app.lucene.FudanNLPAnalyzer;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import static edu.fudan.nlp.cn.CNFactory.ambiguity;
+
 public class Search {
 	public static void main(String[] args) throws IOException, ParseException, LoadModelException {
 		String indexPath = "C:/luceneDir/index/";
 		System.out.println("Index directory '" + indexPath);
 		Directory dir = FSDirectory.open(Paths.get(indexPath));
 		//需要先初始化 CNFactory
-		CNFactory factory = CNFactory.getInstance("models",Models.SEG_TAG);
+		CNFactory factory = CNFactory.getInstance("models",Models.SEG_TAG,true);
 		Analyzer analyzer = new FudanNLPAnalyzer();
 
 		DirectoryReader ireader = DirectoryReader.open(dir);

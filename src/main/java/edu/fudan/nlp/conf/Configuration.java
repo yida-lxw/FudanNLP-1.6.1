@@ -26,6 +26,12 @@ public interface Configuration {
     public boolean usePOSFilter();
 
     /**
+     * 是否启用对用户自定义扩展字典里的词语进行模糊处理
+     * @return
+     */
+    public boolean ambiguity();
+
+    /**
      * 返回停用词字典文件的加载路径
      * @return
      */

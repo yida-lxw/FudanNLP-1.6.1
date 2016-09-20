@@ -44,6 +44,10 @@ public class Dictionary {
 		this(path,false,MAX_LEN,MIN_LEN);
 	}
 
+	public Dictionary(String path, boolean ambiguity) {
+		this(path,ambiguity,MAX_LEN,MIN_LEN);
+	}
+
 	/**
 	 * 
 	 * @param path
@@ -55,7 +59,7 @@ public class Dictionary {
 		this.maxLen = maxLen;
 		this.minlen = minLen;
 		dp = new MultiValueMap<String, String>();
-		this.setAmbiguity(ambiguity);
+		this.ambiguity = ambiguity;
 		ArrayList<String[]> al = loadDict(path);
 		add(al); 
 		createIndex();
